@@ -24,7 +24,16 @@ namespace ZBingWallpaper
 
             JobManager.Initialize();
             JobManager.AddJob(
-                async () => await BingWallpaper.Request(),
+                async () =>
+                {
+                    await Application.Current.Dispatcher.Invoke(
+                       async delegate
+                       {
+                           //代码块
+                           await BingWallpaper.Request();
+                           WindowsTaskbarIcon.Refresh();
+                       });
+                },
                 s => s.ToRunEvery(1).Days().At(0, 5)
             );
         }

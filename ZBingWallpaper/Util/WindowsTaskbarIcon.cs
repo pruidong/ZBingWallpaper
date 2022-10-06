@@ -31,11 +31,23 @@ namespace AutoUpdateBingWallpaper.Util
             WindowsNotifyIcon.Dispose();
         }
 
+        public static void Refresh()
+        {
+            if (WindowsNotifyIcon is null)
+            {
+                return;
+            }
+            Exit();
+            InitNotifyIcon();
+        }
+
         static MenuItem GetTitleItem(string imgTitle, string imgCopyright)
         {
-            MenuItem detail = new();
-            detail.Header = imgTitle;
-            detail.ToolTip = imgCopyright;
+            MenuItem detail = new()
+            {
+                Header = imgTitle,
+                ToolTip = imgCopyright
+            };
             detail.Click += delegate (object sender, RoutedEventArgs e)
             {
                 Clipboard.SetDataObject(imgTitle + "\n" + imgCopyright);
@@ -55,7 +67,7 @@ namespace AutoUpdateBingWallpaper.Util
 
             current = await LocalDataUtil.GetCurrentImage();
 
-            string imgTitle = "", imgCopyright = ""; ;
+            string imgTitle = "", imgCopyright = "";
             if (current != null)
             {
                 imgTitle = current.title;
@@ -125,6 +137,7 @@ namespace AutoUpdateBingWallpaper.Util
             refresh.Click += async delegate (object sender, RoutedEventArgs e)
             {
                 _ = await BingWallpaper.Request();
+                Refresh();
             };
             context.Items.Add(refresh);
 
